@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Changer | Clean Water Game</title>
+
+  <style>
+    :root {
+      --black: #111111
+;
+      --white: #ffffff
+;
+      --yellow: #ffd500
+;
+      --blue: #54c8e8
+;
+      --deep-blue: #168fb5
+;
+      --green: #78c878
+;
+      --red: #e7685d
+;
+      --soft-gray: #f4f4f1
+;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--soft-gray);
+      color: var(--black);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button {
+      border: 3px solid var(--black);
+      border-radius: 999px;
+      padding: 0.8rem 1.2rem;
+      background: var(--yellow);
+      color: var(--black);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover,
+    button:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 4px 4px 0 var(--black);
+      outline: none;
+    }
+
+    button.secondary {
+      background: var(--white);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .app {
+      width: min(1100px, 94vw);
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(3rem, 9vw, 6.5rem);
+      line-height: 0.85;
+      letter-spacing: -0.08em;
+    }
+
+    .mission {
+      max-width: 430px;
+      margin: 0.8rem 0 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .brand-note {
+      max-width: 210px;
+      padding: 0.7rem;
+      border: 2px solid var(--black);
+      background: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat {
+      padding: 1rem;
+      border: 3px solid var(--black);
+      border-radius: 18px;
+      background: var(--white);
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .progress-shell {
+      height: 16px;
+      overflow: hidden;
+      border: 3px solid var(--black);
+      border-radius: 999px;
+      background: var(--white);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 100%;
+      background: var(--green);
+      transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    .game-card {
+      overflow: hidden;
+      border: 3px solid var(--black);
+      border-radius: 28px;
+      background: var(--white);
+    }
+
+    .game-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border-bottom: 3px solid var(--black);
+    }
+
+    .instructions {
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .game-area {
+      position: relative;
+      min-height: 450px;
+      overflow: hidden;
+      background:
+        linear-gradient(
+          to bottom,
+          #d8f2c8
+ 0 28%,
+          #a8dc9a
+ 28% 33%,
+          var(--blue) 33% 73%,
+          #a8dc9a
+ 73% 78%,
+          #d8f2c8
+ 78% 100%
+        );
+    }
+
+    .river-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .river-line.one {
+      top: 44%;
+    }
+
+    .river-line.two {
+      top: 62%;
+    }
+
+    .water-drop {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 2.5rem;
+      animation: drift 5s linear infinite;
+    }
+
+    .drop-one {
+      top: 39%;
+      left: 10%;
+    }
+
+    .drop-two {
+      top: 65%;
+      left: 52%;
+      animation-delay: 1.5s;
+    }
+
+    .drop-three {
+      top: 52%;
+      left: 78%;
+      animation-delay: 3s;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translateX(-30px);
+      }
+      to {
+        transform: translateX(80px);
+      }
+    }
+
+    .river-label {
+      position: absolute;
+      top: 38%;
+      left: 1rem;
+      color: rgba(0, 0, 0, 0.35);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .character {
+      position: absolute;
+      right: 5%;
+      bottom: 5%;
+      width: 90px;
+      text-align: center;
+      z-index: 4;
+    }
+
+    .character-body {
+      position: relative;
+      width: 58px;
+      height: 78px;
+      margin: 0 auto;
+    }
+
+    .head {
+      position: absolute;
+      top: 0;
+      left: 12px;
+      width: 34px;
+      height: 34px;
+      border: 3px solid var(--black);
+      border-radius: 50%;
+      background: #f4b083
+;
+    }
+
+    .head::before,
+    .head::after {
+      content: "";
+      position: absolute;
+      top: 13px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--black);
+    }
+
+    .head::before {
+      left: 8px;
+    }
+
+    .head::after {
+      right: 8px;
+    }
+
+    .hair {
+      position: absolute;
+      top: -4px;
+      left: 9px;
+      width: 40px;
+      height: 14px;
+      border: 3px solid var(--black);
+      border-bottom: 0;
+      border-radius: 20px 20px 0 0;
+      background: #4d342b
+;
+    }
+
+    .body-shape {
+      position: absolute;
+      top: 31px;
+      left: 5px;
+      width: 48px;
+      height: 40px;
+      border: 3px solid var(--black);
+      border-radius: 18px 18px 8px 8px;
+      background: var(--yellow);
+    }
+
+    .arm {
+      position: absolute;
+      top: 39px;
+      width: 23px;
+      height: 8px;
+      border: 3px solid var(--black);
+      border-radius: 999px;
+      background: #f4b083
+;
+    }
+
+    .arm.left {
+      left: -10px;
+      transform: rotate(25deg);
+    }
+
+    .arm.right {
+      right: -10px;
+      transform: rotate(-25deg);
+    }
+
+    .character-name {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+
+    .litter {
+      position: absolute;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--black);
+      border-radius: 14px;
+      background: var(--white);
+      font-size: 1.65rem;
+      cursor: pointer;
+      user-select: none;
+      transform: translate(-50%, -50%);
+      animation: bob 1.4s ease-in-out infinite;
+    }
+
+    .litter:hover,
+    .litter:focus-visible {
+      outline: 4px solid var(--yellow);
+      outline-offset: 3px;
+    }
+
+    @keyframes bob {
+      0%, 100% {
+        margin-top: 0;
+      }
+      50% {
+        margin-top: -6px;
+      }
+    }
+
+    .feedback {
+      min-height: 2.5rem;
+      padding: 0.8rem 1.2rem;
+      border-top: 3px solid var(--black);
+      background: var(--white);
+      font-weight: 800;
+    }
+
+    .feedback.good {
+      background: #e0f6dc
+;
+    }
+
+    .feedback.bad {
+      background: #ffe0dc
+;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+
+    .summary {
+      display: none;
+      margin-top: 1rem;
+      padding: 1.3rem;
+      border: 3px solid var(--black);
+      border-radius: 20px;
+      background: var(--yellow);
+    }
+
+    .summary.visible {
+      display: block;
+    }
+
+    .summary h2 {
+      margin-top: 0;
+    }
+
+    .summary p {
+      max-width: 650px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        display: block;
+      }
+
+      .brand-note {
+        margin-top: 1rem;
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .game-area {
+        min-height: 420px;
+      }
+
+      .game-top {
+        display: block;
+      }
+
+      .instructions {
+        margin-bottom: 0.5rem;
+      }
+
+      .character {
+        right: 2%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <p class="eyebrow">Clean water awareness game</p>
+        <h1>Changer</h1>
+        <p class="mission">Keep clean water flowing.</p>
+      </div>
+
+      <div class="brand-note">
+        Inspired by charity: water<br />
+        This is an independent educational concept.
+      </div>
+    </header>
+
+    <section class="dashboard" aria-label="Game statistics">
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span id="score" class="stat-value">0</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Time</span>
+        <span id="time" class="stat-value">30</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Cleanliness</span>
+        <span id="cleanlinessText" class="stat-value">100%</span>
+        <div class="progress-shell" aria-label="Water cleanliness">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-card">
+      <div class="game-top">
+        <p class="instructions">
+          Click or tap the litter before it reaches the right side of the river.
+        </p>
+        <strong id="status">Ready</strong>
+      </div>
+
+      <div
+        id="gameArea"
+        class="game-area"
+        aria-label="Horizontal river gameplay area"
+      >
+        <div class="river-line one"></div>
+        <div class="river-line two"></div>
+
+        <div class="water-drop drop-one">💧</div>
+        <div class="water-drop drop-two">💧</div>
+        <div class="water-drop drop-three">💧</div>
+
+        <span class="river-label">Clean water source</span>
+
+        <div class="character" aria-label="A friendly river guardian">
+          <div class="character-body">
+            <div class="hair"></div>
+            <div class="head"></div>
+            <div class="body-shape"></div>
+            <div class="arm left"></div>
+            <div class="arm right"></div>
+          </div>
+          <span class="character-name">River Guardian</span>
+        </div>
+      </div>
+
+      <div id="feedback" class="feedback" aria-live="polite">
+        Press Start when you are ready to protect the water.
+      </div>
+    </section>
+
+    <div class="controls">
+      <button id="startButton">Start</button>
+      <button id="pauseButton" class="secondary" disabled>Pause</button>
+      <button id="restartButton" class="secondary">Restart</button>
+      <button id="soundButton" class="secondary" aria-pressed="true">
+        Sound: On
+      </button>
+    </div>
+
+    <section id="summary" class="summary" aria-live="polite">
+      <h2>Round complete</h2>
+      <p id="summaryText"></p>
+      <button id="replayButton">Play again</button>
+    </section>
+  </main>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const scoreElement = document.getElementById("score");
+    const timeElement = document.getElementById("time");
+    const cleanlinessText = document.getElementById("cleanlinessText");
+    const progressBar = document.getElementById("progressBar");
+    const feedback = document.getElementById("feedback");
+    const statusElement = document.getElementById("status");
+    const summary = document.getElementById("summary");
+    const summaryText = document.getElementById("summaryText");
+
+    const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const restartButton = document.getElementById("restartButton");
+    const replayButton = document.getElementById("replayButton");
+    const soundButton = document.getElementById("soundButton");
+
+    let score = 0;
+    let cleanliness = 100;
+    let timeLeft = 30;
+    let running = false;
+    let paused = false;
+    let soundOn = true;
+    let gameTimer = null;
+    let litterTimer = null;
+    let movementTimer = null;
+    let litterItems = [];
+    let bestScore = Number(localStorage.getItem("changerBestScore") || 0);
+
+    const litterTypes = [
+      { icon: "🥤", label: "plastic cup" },
+      { icon: "🛍️", label: "plastic bag" },
+      { icon: "🧴", label: "bottle" },
+      { icon: "🧻", label: "waste" },
+      { icon: "🥫", label: "can" }
+    ];
+
+    function updateDashboard() {
+      scoreElement.textContent = score;
+      timeElement.textContent = timeLeft;
+      cleanlinessText.textContent = `${cleanliness}%`;
+      progressBar.style.width = `${cleanliness}%`;
+
+      if (cleanliness > 60) {
+        progressBar.style.background = "var(--green)";
+      } else if (cleanliness > 30) {
+        progressBar.style.background = "var(--yellow)";
+      } else {
+        progressBar.style.background = "var(--red)";
+      }
+    }
+
+    function setFeedback(message, type = "") {
+      feedback.textContent = message;
+      feedback.className = `feedback ${type}`;
+    }
+
+    function playBeep(frequency = 600) {
+      if (!soundOn) return;
+
+      try {
+        const audioContext = new AudioContext();
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = "sine";
+        gain.gain.value = 0.04;
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.08);
+      } catch {
+        // Sound is optional, so the game continues if audio is unavailable.
+      }
+    }
+
+    function clearLitter() {
+      litterItems.forEach(item => item.element.remove());
+      litterItems = [];
+    }
+
+    function createLitter() {
+      if (!running || paused) return;
+
+      const type = litterTypes[
+        Math.floor(Math.random() * litterTypes.length)
+      ];
+
+      const element = document.createElement("button");
+      element.className = "litter";
+      element.type = "button";
+      element.textContent = type.icon;
+      element.setAttribute("aria-label", `Remove ${type.label}`);
+
+      const topPosition = 42 + Math.random() * 25;
+      const startPosition = 8 + Math.random() * 10;
+
+      element.style.left = `${startPosition}%`;
+      element.style.top = `${topPosition}%`;
+
+      const item = {
+        element,
+        position: startPosition,
+        speed: 0.4 + Math.random() * 0.35
+      };
+
+      element.addEventListener("click", () => collectLitter(item));
+
+      gameArea.appendChild(element);
+      litterItems.push(item);
+    }
+
+    function collectLitter(item) {
+      if (!running || paused) return;
+
+      item.element.remove();
+      litterItems = litterItems.filter(current => current !== item);
+
+      score += 10;
+      cleanliness = Math.min(100, cleanliness + 3);
+
+      setFeedback("Great job. You protected the water source.", "good");
+      playBeep(760);
+      updateDashboard();
+    }
+
+    function moveLitter() {
+      if (!running || paused) return;
+
+      litterItems.forEach(item => {
+        item.position += item.speed;
+        item.element.style.left = `${item.position}%`;
+
+        if (item.position > 94) {
+          item.element.remove();
+          litterItems = litterItems.filter(current => current !== item);
+
+          cleanliness = Math.max(0, cleanliness - 8);
+          setFeedback("A piece of litter reached the water. Keep watching.", "bad");
+          playBeep(220);
+          updateDashboard();
+        }
+      });
+    }
+
+    function startGame() {
+      clearLitter();
+
+      score = 0;
+      cleanliness = 100;
+      timeLeft = 30;
+      running = true;
+      paused = false;
+
+      summary.classList.remove("visible");
+      startButton.disabled = true;
+      pauseButton.disabled = false;
+      pauseButton.textContent = "Pause";
+      statusElement.textContent = "Playing";
+
+      setFeedback("The cleanup has started. Keep the river clear.");
+      updateDashboard();
+
+      gameTimer = setInterval(() => {
+        if (!paused) {
+          timeLeft -= 1;
+          updateDashboard();
+
+          if (timeLeft <= 0) {
+            endGame();
+          }
+        }
+      }, 1000);
+
+      litterTimer = setInterval(createLitter, 1200);
+      movementTimer = setInterval(moveLitter, 100);
+    }
+
+    function togglePause() {
+      if (!running) return;
+
+      paused = !paused;
+      pauseButton.textContent = paused ? "Resume" : "Pause";
+      statusElement.textContent = paused ? "Paused" : "Playing";
+
+      setFeedback(
+        paused
+          ? "Game paused. Resume when you are ready."
+          : "The cleanup continues."
+      );
+    }
+
+    function endGame() {
+      running = false;
+      paused = false;
+
+      clearInterval(gameTimer);
+      clearInterval(litterTimer);
+      clearInterval(movementTimer);
+
+      gameTimer = null;
+      litterTimer = null;
+      movementTimer = null;
+
+      clearLitter();
+
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+      pauseButton.textContent = "Pause";
+      statusElement.textContent = "Finished";
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("changerBestScore", bestScore);
+      }
+
+      summaryText.textContent =
+        `You earned ${score} points and finished with ${cleanliness}% water cleanliness. ` +
+        `Preventing litter and protecting water sources helps communities access safer water. ` +
+        `Your best score is ${bestScore}.`;
+
+      summary.classList.add("visible");
+      setFeedback("Round complete. Every cleanup action makes a difference.", "good");
+    }
+
+    function restartGame() {
+      clearInterval(gameTimer);
+      clearInterval(litterTimer);
+      clearInterval(movementTimer);
+
+      gameTimer = null;
+      litterTimer = null;
+      movementTimer = null;
+
+      clearLitter();
+
+      running = false;
+      paused = false;
+      score = 0;
+      cleanliness = 100;
+      timeLeft = 30;
+
+      startButton.disabled = false;
+      pauseButton.disabled = true;
+      pauseButton.textContent = "Pause";
+      statusElement.textContent = "Ready";
+      summary.classList.remove("visible");
+
+      setFeedback("Press Start when you are ready to protect the water.");
+      updateDashboard();
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      soundButton.textContent = `Sound: ${soundOn ? "On" : "Off"}`;
+      soundButton.setAttribute("aria-pressed", String(soundOn));
+    }
+
+    startButton.addEventListener("click", startGame);
+    pauseButton.addEventListener("click", togglePause);
+    restartButton.addEventListener("click", restartGame);
+    replayButton.addEventListener("click", startGame);
+    soundButton.addEventListener("click", toggleSound);
+
+    updateDashboard();
+  </script>
+</body>
+</html>
