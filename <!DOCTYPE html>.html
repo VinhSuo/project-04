@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changer | Clean Water Game</title>
+  <title>The Changer | Clean Water Game</title>
 
   <style>
     :root {
@@ -32,7 +32,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--soft-gray);
+      background: var(--page-bg, var(--soft-gray));
       color: var(--black);
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -113,9 +113,73 @@
       line-height: 1.3;
     }
 
+    .brand-reference {
+      display: grid;
+      grid-template-columns: 120px 1fr 120px;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.2rem 1rem 0.5rem;
+      margin: 1.5rem 0 2rem;
+      color: var(--black);
+    }
+
+    .brand-logo {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      background: var(--yellow);
+      position: relative;
+      box-shadow: 6px 6px 0 rgba(17, 17, 17, 0.14);
+    }
+
+    .brand-logo::before,
+    .brand-logo::after {
+      content: "";
+      position: absolute;
+      border: 3px solid var(--black);
+      border-radius: 10px;
+      inset: 16px;
+    }
+
+    .brand-logo::after {
+      inset: 23px;
+      border-radius: 6px;
+      background: var(--yellow);
+      box-shadow: inset 0 0 0 3px var(--black);
+    }
+
+    .brand-wordmark {
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      font-weight: 400;
+      letter-spacing: -0.08em;
+      line-height: 1;
+      text-align: left;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+    }
+
+    .brand-side {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90px;
+    }
+
+    .brand-side .brand-logo {
+      width: 70px;
+      height: 70px;
+      box-shadow: none;
+    }
+
+    .brand-side .brand-label {
+      display: none;
+    }
+
     .dashboard {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.8rem;
       margin-bottom: 1rem;
     }
@@ -125,6 +189,25 @@
       border: 3px solid var(--black);
       border-radius: 18px;
       background: var(--white);
+    }
+
+    .clock-stat {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .clock-value {
+      font-size: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .clock-date {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      opacity: 0.8;
     }
 
     .stat-label {
@@ -368,22 +451,12 @@
       cursor: pointer;
       user-select: none;
       transform: translate(-50%, -50%);
-      animation: bob 1.4s ease-in-out infinite;
     }
 
     .litter:hover,
     .litter:focus-visible {
       outline: 4px solid var(--yellow);
       outline-offset: 3px;
-    }
-
-    @keyframes bob {
-      0%, 100% {
-        margin-top: 0;
-      }
-      50% {
-        margin-top: -6px;
-      }
     }
 
     .feedback {
@@ -411,6 +484,25 @@
       margin-top: 1rem;
     }
 
+    .bg-cycle-button {
+      border: 3px solid var(--black);
+      border-radius: 999px;
+      padding: 0.7rem 1rem;
+      background: var(--white);
+      color: var(--black);
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      min-width: 170px;
+    }
+
+    .bg-cycle-button:hover,
+    .bg-cycle-button:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 4px 4px 0 var(--black);
+      outline: none;
+    }
+
     .summary {
       display: none;
       margin-top: 1rem;
@@ -418,6 +510,17 @@
       border: 3px solid var(--black);
       border-radius: 20px;
       background: var(--yellow);
+    }
+
+    .legal-branding {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 3px solid var(--black);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      font-weight: 700;
+      color: var(--black);
+      opacity: 0.85;
     }
 
     .summary.visible {
@@ -485,11 +588,15 @@
         <p class="mission">Keep clean water flowing.</p>
       </div>
 
-      <div class="brand-note">
-        Inspired by charity: water<br />
-        This is an independent educational concept.
-      </div>
     </header>
+
+    <section class="brand-reference" aria-label="Brand reference">
+      <div class="brand-logo" aria-label="Brand logo mark"></div>
+      <div class="brand-wordmark">charity: water</div>
+      <div class="brand-side">
+        <div class="brand-logo" aria-label="Brand logo mark"></div>
+      </div>
+    </section>
 
     <section class="dashboard" aria-label="Game statistics">
       <div class="stat">
@@ -508,6 +615,12 @@
         <div class="progress-shell" aria-label="Water cleanliness">
           <div id="progressBar" class="progress-bar"></div>
         </div>
+      </div>
+
+      <div class="stat clock-stat">
+        <span class="stat-label">CST Time</span>
+        <span id="realClock" class="stat-value clock-value">--:--:--</span>
+        <small id="cstDate" class="clock-date">--</small>
       </div>
     </section>
 
@@ -533,7 +646,7 @@
 
         <span class="river-label">Clean water source</span>
 
-        <div class="character" aria-label="A friendly river guardian">
+        <div class="character" aria-label="A friendly river volunteer">
           <div class="character-body">
             <div class="hair"></div>
             <div class="head"></div>
@@ -541,7 +654,7 @@
             <div class="arm left"></div>
             <div class="arm right"></div>
           </div>
-          <span class="character-name">River Guardian</span>
+          <span class="character-name">Volunteer</span>
         </div>
       </div>
 
@@ -557,6 +670,9 @@
       <button id="soundButton" class="secondary" aria-pressed="true">
         Sound: On
       </button>
+      <button id="bgCycleButton" class="bg-cycle-button secondary" type="button">
+        Location: Default
+      </button>
     </div>
 
     <section id="summary" class="summary" aria-live="polite">
@@ -564,6 +680,13 @@
       <p id="summaryText"></p>
       <button id="replayButton">Play again</button>
     </section>
+
+    <div class="legal-branding">
+      This website is an independent educational project and is not affiliated with,
+      sponsored by, or endorsed by any charity, nonprofit, or organization referenced
+      herein. All trademarks, names, and logos remain the property of their
+      respective owners.
+    </div>
   </main>
 
   <script>
@@ -572,6 +695,8 @@
     const timeElement = document.getElementById("time");
     const cleanlinessText = document.getElementById("cleanlinessText");
     const progressBar = document.getElementById("progressBar");
+    const realClockElement = document.getElementById("realClock");
+    const cstDateElement = document.getElementById("cstDate");
     const feedback = document.getElementById("feedback");
     const statusElement = document.getElementById("status");
     const summary = document.getElementById("summary");
@@ -582,6 +707,7 @@
     const restartButton = document.getElementById("restartButton");
     const replayButton = document.getElementById("replayButton");
     const soundButton = document.getElementById("soundButton");
+    const bgCycleButton = document.getElementById("bgCycleButton");
 
     let score = 0;
     let cleanliness = 100;
@@ -616,6 +742,27 @@
       } else {
         progressBar.style.background = "var(--red)";
       }
+    }
+
+    function updateCSTClock() {
+      const now = new Date();
+      const timeFormatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Chicago",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      });
+
+      const dateFormatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Chicago",
+        weekday: "short",
+        month: "short",
+        day: "numeric"
+      });
+
+      realClockElement.textContent = timeFormatter.format(now);
+      cstDateElement.textContent = dateFormatter.format(now);
     }
 
     function setFeedback(message, type = "") {
@@ -827,6 +974,39 @@
       soundButton.setAttribute("aria-pressed", String(soundOn));
     }
 
+    const presetBackgrounds = [
+      { label: "Default", url: "" },
+      { label: "London River", url: "Boats-River-Thames-London-Tower-Bridge.webp" },
+      { label: "Venice", url: "venice2-ap-ml-230530_1685455543825_hpEmbed_3x2.avif" },
+      { label: "Mekong River", url: "images.jpg" }
+    ];
+
+    let backgroundIndex = 0;
+
+    function applyBackgroundImage(url) {
+      const overlay = "linear-gradient(rgba(255,255,255,0.18), rgba(255,255,255,0.18))";
+
+      if (!url) {
+        document.body.style.setProperty("--page-bg", "var(--soft-gray)");
+        return;
+      }
+
+      document.body.style.setProperty(
+        "--page-bg",
+        `${overlay}, url('${url}') center/cover no-repeat fixed`
+      );
+    }
+
+    function cycleBackground() {
+      backgroundIndex = (backgroundIndex + 1) % presetBackgrounds.length;
+      const current = presetBackgrounds[backgroundIndex];
+      bgCycleButton.textContent = `Location: ${current.label}`;
+      applyBackgroundImage(current.url);
+    }
+
+    bgCycleButton.addEventListener("mouseenter", cycleBackground);
+    bgCycleButton.addEventListener("click", cycleBackground);
+
     startButton.addEventListener("click", startGame);
     pauseButton.addEventListener("click", togglePause);
     restartButton.addEventListener("click", restartGame);
@@ -834,6 +1014,8 @@
     soundButton.addEventListener("click", toggleSound);
 
     updateDashboard();
+    updateCSTClock();
+    setInterval(updateCSTClock, 1000);
   </script>
 </body>
 </html>
