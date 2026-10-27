@@ -976,9 +976,9 @@
 
     const presetBackgrounds = [
       { label: "Default", url: "" },
-      { label: "London River", url: "Boats-River-Thames-London-Tower-Bridge.webp" },
-      { label: "Venice", url: "venice2-ap-ml-230530_1685455543825_hpEmbed_3x2.avif" },
-      { label: "Mekong River", url: "images.jpg" }
+      { label: "London River", url: "storage/Boats-River-Thames-London-Tower-Bridge.webp" },
+      { label: "Venice", url: "storage/venice2-ap-ml-230530_1685455543825_hpEmbed_3x2.avif" },
+      { label: "Mekong River", url: "storage/images.jpg" }
     ];
 
     let backgroundIndex = 0;
@@ -1004,7 +1004,6 @@
       applyBackgroundImage(current.url);
     }
 
-    bgCycleButton.addEventListener("mouseenter", cycleBackground);
     bgCycleButton.addEventListener("click", cycleBackground);
 
     startButton.addEventListener("click", startGame);
